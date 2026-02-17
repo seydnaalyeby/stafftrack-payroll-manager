@@ -1,0 +1,177 @@
+<div class="simple-attendance">
+  <!-- Header -->
+  <div class="header">
+    <h1>{{ 'attendance.title' | translate }}</h1>
+    <p class="date">{{ todayDate | date:'fullDate' }}</p>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="stats">
+    <div class="stat present">
+      <span class="stat-number">{{ presentCount }}</span>
+      <span class="stat-label">{{ 'attendance.present' | translate }}</span>
+    </div>
+    <div class="stat absent">
+      <span class="stat-number">{{ absentCount }}</span>
+      <span class="stat-label">{{ 'attendance.absent' | translate }}</span>
+    </div>
+    <div class="stat total">
+      <span class="stat-number">{{ totalWorkers }}</span>
+      <span class="stat-label">{{ 'common.total' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Workers List -->
+  <div class="workers-list" *ngIf="!isLoadingWorkers && !isLoadingAttendance">
+    <div class="worker-card" *ngFor="let worker of filteredWorkers">
+      <!-- Worker Info -->
+      <div class="worker-info">
+        <div class="worker-avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <div class="worker-details">
+          <h3>{{ worker.name }}</h3>
+          <p>{{ worker.position }}</p>
+        </div>
+      </div>
+
+      <!-- Salary Info -->
+      <div class="salary-info">
+        <div class="salary-item">
+          <span class="salary-label">{{ 'attendance.salary.monthlySalary' | translate }}:</span>
+          <span class="salary-value">{{ worker.monthlySalary | currency:'USD' }}</span>
+        </div>
+        <div class="salary-item">
+          <span class="salary-label">{{ 'attendance.salary.dailyRate' | translate }}:</span>
+          <span class="salary-value">{{ getDailySalary(worker.monthlySalary) | currency:'USD' }}</span>
+        </div>
+        <div class="salary-item earned">
+          <span class="salary-label">{{ 'attendance.salary.earned' | translate: {days: getDaysPresent(worker.id)} }}:</span>
+          <span class="salary-value earned-amount">{{ getEarnedAmount(worker.id, worker.monthlySalary) | currency:'USD' }}</span>
+        </div>
+      </div>
+
+      <!-- Attendance Status -->
+      <div class="attendance-section">
+        <label class="status-label">{{ 'attendance.markAttendance' | translate }}:</label>
+        
+        <!-- Simple Radio Buttons -->
+        <div class="attendance-options">
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              name="attendance-{{ worker.id }}" 
+              value="PRESENT" 
+              [checked]="attendanceStatus[worker.id] === 'PRESENT'"
+              (change)="setAttendanceStatus(worker.id, 'PRESENT')"
+            >
+            <span class="radio-text present">✓ {{ 'attendance.present' | translate }}</span>
+          </label>
+          
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              name="attendance-{{ worker.id }}" 
+              value="ABSENT" 
+              [checked]="attendanceStatus[worker.id] === 'ABSENT'"
+              (change)="setAttendanceStatus(worker.id, 'ABSENT')"
+            >
+            <span class="radio-text absent">✗ {{ 'attendance.absent' | translate }}</span>
+          </label>
+        </div>
+
+        <!-- Absent Reason (only show if absent) -->
+        <div class="absent-reason" *ngIf="attendanceStatus[worker.id] === 'ABSENT'">
+          <label class="reason-label">{{ 'attendance.absentReason' | translate }}:</label>
+          <select class="reason-select" (change)="setAbsentReason(worker.id, $event)">
+            <option value="">{{ 'common.select' | translate }}...</option>
+            <option value="sick">{{ 'attendance.reasons.sick' | translate }}</option>
+            <option value="vacation">{{ 'attendance.reasons.vacation' | translate }}</option>
+            <option value="personal">{{ 'attendance.reasons.personal' | translate }}</option>
+            <option value="late">{{ 'attendance.reasons.late' | translate }}</option>
+            <option value="half-day">{{ 'attendance.reasons.halfDay' | translate }}</option>
+            <option value="emergency">{{ 'attendance.reasons.emergency' | translate }}</option>
+            <option value="other">{{ 'attendance.reasons.other' | translate }}</option>
+          </select>
+        </div>
+
+        <!-- Individual Save Button -->
+        <div class="individual-actions">
+          <button 
+            class="save-individual-btn" 
+            (click)="saveIndividualAttendance(worker.id)"
+            [disabled]="isLoading"
+          >
+            <mat-icon>save</mat-icon>
+            {{ 'common.save' | translate }} {{ worker.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="isLoadingWorkers || isLoadingAttendance">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <p>{{ 'common.loading' | translate }} {{ 'attendance.title' | translate }}...</p>
+  </div>
+
+  <!-- Save All Button -->
+  <div class="save-section">
+    <button 
+      class="save-btn" 
+      (click)="saveAttendance()" 
+      [disabled]="isLoading || workers.length === 0"
+    >
+      <mat-icon *ngIf="!isLoading">save</mat-icon>
+      <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+      {{ isLoading ? ('common.loading' | translate) + '...' : ('attendance.saveAll' | translate) }}
+    </button>
+  </div>
+
+  <!-- Today's Summary with Update/Delete -->
+  <div class="summary">
+    <h2>{{ 'attendance.summary' | translate }}</h2>
+    <div class="summary-list">
+      <div class="summary-item" *ngFor="let worker of workers">
+        <div class="summary-worker">
+          <span class="worker-name">{{ worker.name }}</span>
+          <span class="worker-id">ID: {{ worker.id }}</span>
+        </div>
+        <div class="summary-status">
+          <span class="status-badge present" *ngIf="attendanceStatus[worker.id] === 'PRESENT'">
+            ✓ {{ 'attendance.present' | translate }}
+          </span>
+          <span class="status-badge absent" *ngIf="attendanceStatus[worker.id] === 'ABSENT'">
+            ✗ {{ 'attendance.absent' | translate }}
+          </span>
+          <span class="absent-reason-text" *ngIf="attendanceStatus[worker.id] === 'ABSENT' && absentReasons[worker.id]">
+            - {{ getAbsentReasonDisplay(absentReasons[worker.id]) }}
+          </span>
+        </div>
+        <div class="summary-time">
+          <span *ngIf="getSavedAttendanceTime(worker.id)">{{ getSavedAttendanceTime(worker.id) | date:'shortTime' }}</span>
+          <span *ngIf="!getSavedAttendanceTime(worker.id)" class="not-saved">{{ 'attendance.notSavedYet' | translate }}</span>
+        </div>
+        <div class="summary-actions">
+          <button 
+            class="update-btn" 
+            (click)="updateWorkerAttendance(worker.id)"
+            [disabled]="!getSavedAttendanceTime(worker.id)"
+            title="{{ 'common.edit' | translate }}"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button 
+            class="delete-btn" 
+            (click)="deleteWorkerAttendance(worker.id)"
+            [disabled]="!getSavedAttendanceTime(worker.id)"
+            title="{{ 'common.delete' | translate }}"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

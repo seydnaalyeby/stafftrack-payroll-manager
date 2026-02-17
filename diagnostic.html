@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Diagnostic</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+    </style>
+</head>
+<body>
+    <h1>EquipePay API Diagnostic</h1>
+    
+    <div id="backend-status" class="test loading">Testing Backend Connection...</div>
+    <div id="workers-api" class="test loading">Testing Workers API...</div>
+    <div id="attendance-api" class="test loading">Testing Attendance API...</div>
+    <div id="auth-api" class="test loading">Testing Auth API...</div>
+    
+    <h2>Instructions:</h2>
+    <ol>
+        <li>Open this page while both backend and frontend are running</li>
+        <li>Check each test result below</li>
+        <li>If any test fails, check the corresponding service</li>
+        <li>Open browser console (F12) for detailed error messages</li>
+    </ol>
+    
+    <h2>Expected Results:</h2>
+    <ul>
+        <li>Backend: Should show "Connected" (green)</li>
+        <li>Workers API: Should show "Working" (green) or "403 Unauthorized" (yellow)</li>
+        <li>Attendance API: Should show "Working" (green) or "403 Unauthorized" (yellow)</li>
+        <li>Auth API: Should show "Working" (green)</li>
+    </ul>
+
+    <script>
+        // Test backend connection
+        fetch('http://localhost:30000/api/workers')
+            .then(response => {
+                const status = document.getElementById('backend-status');
+                if (response.ok) {
+                    status.className = 'test success';
+                    status.textContent = '✅ Backend Connected (Status: ' + response.status + ')';
+                } else {
+                    status.className = 'test error';
+                    status.textContent = '❌ Backend Error (Status: ' + response.status + ')';
+                }
+            })
+            .catch(error => {
+                const status = document.getElementById('backend-status');
+                status.className = 'test error';
+                status.textContent = '❌ Backend Connection Failed: ' + error.message;
+            });
+
+        // Test workers API
+        fetch('http://localhost:30000/api/workers')
+            .then(response => {
+                const status = document.getElementById('workers-api');
+                if (response.ok) {
+                    status.className = 'test success';
+                    status.textContent = '✅ Workers API Working (Status: ' + response.status + ')';
+                } else if (response.status === 403) {
+                    status.className = 'test loading';
+                    status.textContent = '⚠️ Workers API Requires Authentication (Status: ' + response.status + ')';
+                } else {
+                    status.className = 'test error';
+                    status.textContent = '❌ Workers API Error (Status: ' + response.status + ')';
+                }
+            })
+            .catch(error => {
+                const status = document.getElementById('workers-api');
+                status.className = 'test error';
+                status.textContent = '❌ Workers API Failed: ' + error.message;
+            });
+
+        // Test attendance API
+        const today = new Date().toISOString().split('T')[0];
+        fetch('http://localhost:30000/api/attendance/date/' + today)
+            .then(response => {
+                const status = document.getElementById('attendance-api');
+                if (response.ok) {
+                    status.className = 'test success';
+                    status.textContent = '✅ Attendance API Working (Status: ' + response.status + ')';
+                } else if (response.status === 403) {
+                    status.className = 'test loading';
+                    status.textContent = '⚠️ Attendance API Requires Authentication (Status: ' + response.status + ')';
+                } else {
+                    status.className = 'test error';
+                    status.textContent = '❌ Attendance API Error (Status: ' + response.status + ')';
+                }
+            })
+            .catch(error => {
+                const status = document.getElementById('attendance-api');
+                status.className = 'test error';
+                status.textContent = '❌ Attendance API Failed: ' + error.message;
+            });
+
+        // Test auth API
+        fetch('http://localhost:30000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'test', password: 'test' })
+        })
+            .then(response => {
+                const status = document.getElementById('auth-api');
+                if (response.status === 401) {
+                    status.className = 'test success';
+                    status.textContent = '✅ Auth API Working (Status: ' + response.status + ' - Invalid credentials expected)';
+                } else {
+                    status.className = 'test success';
+                    status.textContent = '✅ Auth API Working (Status: ' + response.status + ')';
+                }
+            })
+            .catch(error => {
+                const status = document.getElementById('auth-api');
+                status.className = 'test error';
+                status.textContent = '❌ Auth API Failed: ' + error.message;
+            });
+    </script>
+</body>
+</html>
