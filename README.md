@@ -1,523 +1,148 @@
-# EquipePay - Worker Attendance and Payroll Management System
+# EquipePay – Worker Attendance & Payroll Manager
 
-An excellent, modern web application for managing worker attendance, payroll, and employee data with robust authentication and real-time dashboard analytics.
+Full-stack workforce management application designed for small and medium-sized businesses.  
+Easily track daily worker attendance, automatically calculate salaries based on presence, generate detailed payroll reports, and manage employee information securely.
 
-## 🌟 Features
+**Spring Boot** backend + **Angular** frontend — modern, responsive, secure, and production-ready.
 
-### 🔐 Authentication & Security
-- **JWT Authentication**: Secure login/register with access and refresh tokens
-- **Token Management**: 15-minute access tokens with 1-day refresh tokens
-- **Auto-Logout**: Automatic token cleanup and session management
-- **Protected Routes**: All API endpoints secured with Spring Security
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?style=flat&logo=spring&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-17-DD0031?style=flat&logo=angular&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![JWT Secured](https://img.shields.io/badge/JWT-black?style=flat&logo=json-web-tokens)
 
-### 👥 Worker Management
-- **CRUD Operations**: Create, read, update, delete workers
-- **Advanced Search**: Search workers by name, position, or filter by criteria
-- **Data Validation**: Comprehensive form validation with error handling
-- **Profile Management**: Worker photos, contact info, and salary details
+## 🌟 Key Features
 
-### 📊 Attendance Tracking
-- **Daily Attendance**: Mark present/absent for any date
-- **Bulk Operations**: Mark attendance for multiple workers
-- **Attendance History**: Complete attendance records with filtering
-- **Automated Calculations**: Present days count and attendance statistics
+- Secure admin registration & login (JWT with access + refresh tokens)
+- Full CRUD for workers (name, phone, position, monthly salary, join date, photo)
+- Daily attendance marking (Present / Absent) with bulk save
+- Automatic payroll calculation: daily rate = monthly salary / 30
+- Real-time earned salary display per worker
+- Beautiful dashboard with KPI cards, weekly charts & quick actions
+- Date-range attendance & payroll reports + CSV export
+- Modern UI with gradients, Angular Material + Tailwind CSS
+- Responsive design (works well on desktop & mobile)
+- Form validation, loading states, toast notifications
 
-### 💰 Payroll Management
-- **Salary Management**: Monthly and daily salary calculations
-- **Automated Payroll**: Generate salary records based on attendance
-- **Payment Tracking**: Complete payment history and status
-- **Financial Reports**: Comprehensive payroll analytics
+## Screenshots
 
-### 📈 Dashboard Analytics
-- **Real-time Statistics**: Live worker count and attendance data
-- **Visual Analytics**: Charts and graphs for data visualization
-- **Quick Actions**: One-click access to common tasks
-- **Performance Metrics**: Key business indicators at a glance
+### Authentication
+![Login Page](screenshots/login.png)  
+![Register Page](screenshots/register.png)
 
-## 🛠️ Technical Stack
+### Dashboard
+![Dashboard - Analytics Overview](screenshots/dashboard-overview.png)  
+![Dashboard - Welcome View](screenshots/dashboard-welcome.png)
 
-### Backend (Spring Boot)
-- **Framework**: Spring Boot 3.2.0 with Java 23
-- **Database**: PostgreSQL with optimized JPA/Hibernate
-- **Security**: Spring Security with JWT authentication
-- **API**: RESTful API with comprehensive error handling
-- **Performance**: HikariCP connection pooling, database indexing
+### Attendance Marking
+![Daily Attendance Management](screenshots/attendance-marking.png)
 
-### Frontend (Angular)
-- **Framework**: Angular 17 with standalone components
-- **UI Library**: Angular Material with modern design
-- **State Management**: Reactive forms and RxJS observables
-- **Authentication**: JWT token management with auto-refresh
-- **Routing**: Protected routes with authentication guards
+### Reports & Payroll
+![Attendance & Payroll Reports](screenshots/reports.png)
 
-### Database Design
-- **Optimized Schema**: Indexed tables for performance
-- **Relationships**: Proper foreign key constraints
-- **Data Integrity**: Comprehensive validation and constraints
-- **Scalability**: Designed for enterprise-level data
+*Screenshots captured on desktop view — the application is fully responsive.*
 
-## 🚀 Getting Started
+## 🛠️ Tech Stack
+
+**Backend**
+- Java 17 / 21
+- Spring Boot 3.2+
+- Spring Security + JWT authentication
+- Spring Data JPA + Hibernate
+- PostgreSQL
+- Maven
+
+**Frontend**
+- Angular 17+ (standalone components)
+- Angular Material
+- Tailwind CSS
+- RxJS for reactive programming
+- TypeScript
+
+**Other**
+- REST API with DTOs
+- JWT token management (localStorage + auto-refresh)
+- Responsive & accessible UI
+
+## 🚀 Quick Setup (Local Development)
 
 ### Prerequisites
-- **Java 23+**: Backend runtime environment
-- **Node.js 18+**: Frontend build environment
-- **PostgreSQL 15+**: Database server
-- **Maven 3.8+**: Backend build tool
-
-### Installation
-
-1. **Clone Repository**
-   ```bash
-   git clone <repository-url>
-   cd equipepay-app
-   ```
-
-2. **Backend Setup**
-   ```bash
-   cd backend
-   ./mvnw.cmd spring-boot:run
-   ```
-
-3. **Database Setup**
-   ```bash
-   # Create PostgreSQL database
-   createdb -U postgres equipepay
-   
-   # Update application.properties with your credentials
-   ```
-
-4. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   ng serve
-   ```
-
-## 📱 API Documentation
-
-### Authentication Endpoints
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/refresh-token` - Refresh access token
-
-### Worker Management
-- `GET /api/workers` - Get all workers
-- `POST /api/workers` - Create new worker
-- `PUT /api/workers/{id}` - Update worker
-- `DELETE /api/workers/{id}` - Delete worker
-- `GET /api/workers/search?name={name}` - Search workers
-
-### Attendance Management
-- `POST /api/attendance` - Mark attendance
-- `GET /api/attendance/date/{date}` - Get attendance by date
-- `GET /api/attendance/worker/{id}` - Get worker attendance history
-
-## 🔧 Configuration
-
-### Database Configuration
-```properties
-# PostgreSQL Database
-spring.datasource.url=jdbc:postgresql://localhost:5432/equipepay
-spring.datasource.username=postgres
-spring.datasource.password=your-password
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-# JPA Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-```
-
-### JWT Configuration
-```properties
-# JWT Settings
-jwt.secret=mySecretKey123456789012345678901234567890abcdef
-jwt.expiration=900000
-jwt.refresh-expiration=86400000
-```
-
-### Performance Tuning
-```properties
-# Connection Pool
-spring.datasource.hikari.maximum-pool-size=20
-spring.datasource.hikari.minimum-idle=5
-spring.datasource.hikari.idle-timeout=30000
-
-# JPA Performance
-spring.jpa.properties.hibernate.jdbc.batch_size=20
-spring.jpa.properties.hibernate.order_inserts=true
-spring.jpa.properties.hibernate.order_updates=true
-```
-
-## 🎯 Key Features
-
-### Security Features
-- **JWT Authentication**: Industry-standard token-based authentication
-- **Refresh Tokens**: Automatic token renewal without user interruption
-- **Password Security**: Encrypted password storage with validation
-- **CORS Protection**: Configurable cross-origin resource sharing
-- **Session Management**: Secure session handling with auto-cleanup
-
-### Performance Optimizations
-- **Database Indexing**: Optimized queries with strategic indexes
-- **Connection Pooling**: Efficient database connection management
-- **Batch Processing**: Optimized bulk database operations
-- **Lazy Loading**: Efficient data loading strategies
-- **Caching Strategy**: Smart caching for frequently accessed data
-
-### User Experience
-- **Responsive Design**: Mobile-first responsive layout
-- **Loading States**: Clear feedback during data operations
-- **Error Handling**: Comprehensive error messages and recovery
-- **Form Validation**: Real-time validation with helpful feedback
-- **Accessibility**: WCAG compliant interface design
-
-## 🧪 Testing
-
-### Running Tests
-```bash
-# Backend Tests
-cd backend
-./mvnw.cmd test
-
-# Frontend Tests
-cd frontend
-ng test
-```
-
-### Test Coverage
-- **Unit Tests**: Service layer and component testing
-- **Integration Tests**: API endpoint testing
-- **E2E Tests**: End-to-end user journey testing
-- **Security Tests**: Authentication and authorization testing
-
-## � Monitoring & Logging
-
-### Application Monitoring
-- **Health Checks**: Spring Boot actuator endpoints
-- **Performance Metrics**: Database query performance tracking
-- **Error Logging**: Comprehensive error tracking and alerting
-- **Security Logging**: Authentication attempt monitoring
-
-### Database Monitoring
-- **Connection Pool**: HikariCP metrics dashboard
-- **Query Performance**: Slow query identification and optimization
-- **Data Integrity**: Constraint violation monitoring
-- **Backup Strategy**: Automated backup procedures
-
-## �🚀 Deployment
-
-### Production Deployment
-```bash
-# Backend Build
-./mvnw.cmd clean package
-java -jar target/equipepay-backend-0.0.1-SNAPSHOT.jar
-
-# Frontend Build
-ng build --prod
-# Deploy dist/ folder to web server
-```
-
-### Environment Variables
-```bash
-# Database Configuration
-DATABASE_URL=jdbc:postgresql://localhost:5432/equipepay
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=your-password
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRATION=900000
-JWT_REFRESH_EXPIRATION=86400000
-```
-
-## 🤝 Contributing
-
-### Development Guidelines
-1. **Code Style**: Follow established coding conventions
-2. **Testing**: Ensure all new features have tests
-3. **Documentation**: Update documentation for new features
-4. **Security**: Follow security best practices
-5. **Performance**: Consider performance implications
-
-### Git Workflow
-```bash
-# Feature Branch
-git checkout -b feature/new-feature
-git commit -m "feat: Add new feature"
-git push origin feature/new-feature
-
-# Create Pull Request
-# Use descriptive title and detailed description
-# Ensure all tests pass before merging
-```
-
-## 📞 Support
-
-### Common Issues
-- **Database Connection**: Ensure PostgreSQL is running
-- **Token Expiration**: Check system time synchronization
-- **CORS Errors**: Verify frontend URL configuration
-- **Performance**: Monitor database query performance
-
-### Troubleshooting Steps
-1. Check application logs for error details
-2. Verify database connectivity and credentials
-3. Clear browser cache and localStorage
-4. Restart backend and frontend services
-5. Check network connectivity and firewall settings
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Built with ❤️ for modern workforce management**
-
-### Backend
-- **Spring Boot 3** with Java 17
-- **Spring Security** with JWT Authentication
-- **Spring Data JPA** with PostgreSQL
-- **Maven** for dependency management
-
-### Frontend
-- **Angular 17+** with standalone components
-- **Angular Material** for UI components
-- **Tailwind CSS** for styling
-- **RxJS** for reactive programming
-
-## 📋 Features
-
-- **Authentication**: Secure login/register for admin users
-- **Worker Management**: Add, edit, delete workers with personal and salary information
-- **Attendance Tracking**: Daily attendance marking with Present/Absent status
-- **Payroll Calculation**: Automatic daily and monthly salary calculations
-- **Reports**: Generate attendance and payroll reports with CSV export
-- **Responsive Design**: Mobile-friendly interface
-
-## 🛠️ Prerequisites
-
-- Java 17+
-- Node.js 18+
+- Java 17 or 21
+- Node.js 18+ & npm
 - PostgreSQL 13+
-- Maven 3.6+
+- Maven 3.8+
 
-## 📁 Project Structure
+### 1. Database
+```sql
+CREATE DATABASE stafftrack;
+-- or equipepay — make sure to use the same name in .env
 
-```
-equipepay-app/
-├── backend/                 # Spring Boot backend
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/equipepay/
-│   │   │   │   ├── entity/       # JPA entities
-│   │   │   │   ├── repository/   # Spring Data repositories
-│   │   │   │   ├── service/      # Business logic
-│   │   │   │   ├── controller/   # REST controllers
-│   │   │   │   ├── dto/          # Data transfer objects
-│   │   │   │   ├── security/     # JWT configuration
-│   │   │   │   └── config/       # Application configuration
-│   │   │   └── resources/
-│   │   └── test/
-│   └── pom.xml
-├── frontend/                # Angular frontend
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── auth/         # Authentication components
-│   │   │   ├── dashboard/    # Dashboard component
-│   │   │   ├── workers/      # Worker management
-│   │   │   ├── attendance/   # Attendance tracking
-│   │   │   ├── reports/      # Reports and analytics
-│   │   │   ├── services/     # HTTP services
-│   │   │   ├── models/       # TypeScript interfaces
-│   │   │   ├── guards/       # Route guards
-│   │   │   └── interceptors/ # HTTP interceptors
-│   │   └── ...
-│   ├── package.json
-│   └── angular.json
+
+2. Backend
+cd backend
+
+# Copy example configuration
+cp ../.env.example .env
+
+# Edit .env with your values
+# Example:
+# SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/stafftrack
+# SPRING_DATASOURCE_USERNAME=postgres
+# SPRING_DATASOURCE_PASSWORD=yourpassword
+# JWT_SECRET=change-this-to-a-very-long-random-string-min-32-chars
+
+# Run the application
+mvn spring-boot:run
+# or ./mvnw spring-boot:run (Linux/Mac)
+
+→ Backend available at: http://localhost:8080
+3. Frontend
+
+cd frontend
+
+npm install
+ng serve
+# or npm start
+
+→ Frontend available at: http://localhost:4200
+Register a new admin account on the register page to get started.
+
+📁 Project Structure
+
+stafftrack-payroll-manager/
+├── backend/                # Spring Boot REST API
+├── frontend/               # Angular single-page application
+├── screenshots/            # Application interface captures
 ├── .env.example
 ├── .gitignore
 └── README.md
-```
 
-## 🚀 Setup Instructions
+🔧 Main API Endpoints (examples)
+POST /api/auth/register
+POST /api/auth/login
+GET /api/workers
+POST /api/workers
+PUT /api/workers/{id}
+DELETE /api/workers/{id}
+POST /api/attendance
+GET /api/reports?start=YYYY-MM-DD&end=YYYY-MM-DD
 
-### 1. Database Setup
+(Protected routes require Authorization: Bearer <jwt-token> header)
 
-Create a PostgreSQL database:
+🚀 Deployment Options (Free / Low-cost)
 
-```sql
-CREATE DATABASE equipepay;
-CREATE USER equipepay_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE equipepay TO equipepay_user;
-```
+Backend: Render.com, Railway.app, Fly.io, Heroku
+Frontend: Vercel, Netlify, Cloudflare Pages
+Database: Supabase PostgreSQL, Neon.tech, Render PostgreSQL, ElephantSQL
 
-### 2. Backend Setup
+📄 License
+MIT License — free to use, modify, fork, and learn from.
+Built by Seydnealy
+GitHub: https://github.com/seydnaalyeby
+Portfolio: https://github.com/seydnaalyeby/seydnaaly-portfolio
+Another showcase project: https://github.com/seydnaalyeby/travel-reservation-system
+If this project is useful to you — feel free to ⭐ the repository!
 
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
 
-2. Copy environment variables:
-```bash
-cp ../.env.example .env
-```
 
-3. Update `.env` with your database configuration:
-```env
-DB_URL=jdbc:postgresql://localhost:5432/equipepay
-DB_USERNAME=equipepay_user
-DB_PASSWORD=your_password
-JWT_SECRET=yourSecretKey123456789012345678901234567890
-JWT_EXPIRATION=86400000
-```
 
-4. Build and run the application:
-```bash
-mvn clean install
-mvn spring-boot:run
-```
 
-The backend will be available at `http://localhost:8080`
-
-### 3. Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Run the development server:
-```bash
-npm start
-```
-
-The frontend will be available at `http://localhost:4200`
-
-## 📊 API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-
-### Workers
-- `GET /api/workers` - Get all workers
-- `POST /api/workers` - Create new worker
-- `GET /api/workers/{id}` - Get worker by ID
-- `PUT /api/workers/{id}` - Update worker
-- `DELETE /api/workers/{id}` - Delete worker
-- `GET /api/workers/search?name={name}` - Search workers by name
-- `GET /api/workers/by-position?position={position}` - Get workers by position
-
-### Attendance
-- `POST /api/attendance` - Mark attendance
-- `GET /api/attendance/date/{date}` - Get attendance by date
-- `GET /api/attendance/worker/{workerId}` - Get worker attendance by date range
-- `GET /api/attendance/range` - Get attendance by date range
-- `GET /api/attendance/worker/{workerId}/present-days` - Get present days count
-
-## 🎯 Usage
-
-1. **Register/Login**: Create an admin account or login with existing credentials
-2. **Dashboard**: View overview of workers and today's attendance
-3. **Manage Workers**: Add, edit, or delete workers with their information
-4. **Mark Attendance**: Record daily attendance for workers
-5. **Generate Reports**: Create attendance and payroll reports with export functionality
-
-## 🔧 Configuration
-
-### Backend Configuration
-
-The backend uses the following environment variables:
-
-- `DB_URL`: PostgreSQL connection URL
-- `DB_USERNAME`: Database username
-- `DB_PASSWORD`: Database password
-- `JWT_SECRET`: Secret key for JWT token generation
-- `JWT_EXPIRATION`: JWT token expiration time in milliseconds
-
-### Frontend Configuration
-
-The frontend is configured to connect to the backend at `http://localhost:8080`. To change this, update the API URLs in the service files.
-
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd backend
-mvn test
-```
-
-### Frontend Tests
-```bash
-cd frontend
-npm test
-```
-
-## 📝 Development Notes
-
-- The backend uses Spring Boot 3 with Java 17 features
-- Frontend uses Angular 17+ with standalone components for better performance
-- JWT tokens are stored in localStorage for simplicity (consider more secure options for production)
-- Daily salary is calculated as `monthlySalary / 30`
-- All API endpoints are protected except authentication endpoints
-
-## 🚀 Deployment
-
-### Backend Deployment
-
-1. Build the JAR file:
-```bash
-mvn clean package
-```
-
-2. Run the JAR file:
-```bash
-java -jar target/equipepay-backend-0.0.1-SNAPSHOT.jar
-```
-
-### Frontend Deployment
-
-1. Build the application:
-```bash
-npm run build
-```
-
-2. Deploy the `dist/frontend` directory to your web server
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Database Connection Error**: Ensure PostgreSQL is running and credentials are correct
-2. **CORS Issues**: Check that the frontend URL is allowed in backend CORS configuration
-3. **JWT Token Issues**: Clear browser localStorage if experiencing authentication problems
-4. **Port Conflicts**: Ensure ports 8080 (backend) and 4200 (frontend) are available
-
-### Getting Help
-
-- Check the console logs for detailed error messages
-- Ensure all environment variables are properly set
-- Verify database connection and permissions
-- Make sure all dependencies are installed correctly
